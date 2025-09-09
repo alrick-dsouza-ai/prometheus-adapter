@@ -1,4 +1,5 @@
-REGISTRY?=gcr.io/k8s-staging-prometheus-adapter
+# REGISTRY?=gcr.io/k8s-staging-prometheus-adapter
+REGISTRY?=quay.io/applied_dev/applied2
 IMAGE=prometheus-adapter
 ARCH?=$(shell go env GOARCH)
 ALL_ARCH=amd64 arm arm64 ppc64le s390x
@@ -8,7 +9,7 @@ VERSION=$(shell cat VERSION)
 TAG_PREFIX=v
 TAG?=$(TAG_PREFIX)$(VERSION)
 
-GO_VERSION?=1.22.5
+GO_VERSION?=1.24.2
 GOLANGCI_VERSION?=1.56.2
 
 .PHONY: all
@@ -24,7 +25,7 @@ prometheus-adapter: $(SRC_DEPS)
 
 .PHONY: container
 container:
-	docker build -t $(REGISTRY)/$(IMAGE)-$(ARCH):$(TAG) --build-arg ARCH=$(ARCH) --build-arg GO_VERSION=$(GO_VERSION) .
+	docker build --no-cache -t $(REGISTRY):$(IMAGE)-$(ARCH)-$(TAG) --build-arg ARCH=$(ARCH) --build-arg GO_VERSION=$(GO_VERSION) .
 
 # Container push
 # --------------
@@ -33,7 +34,7 @@ PUSH_ARCH_TARGETS=$(addprefix push-,$(ALL_ARCH))
 
 .PHONY: push
 push: container
-	docker push $(REGISTRY)/$(IMAGE)-$(ARCH):$(TAG)
+	docker push $(REGISTRY):$(IMAGE)-$(ARCH)-$(TAG)
 
 push-all: $(PUSH_ARCH_TARGETS) push-multi-arch;
 
