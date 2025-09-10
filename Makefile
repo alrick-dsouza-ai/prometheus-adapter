@@ -1,4 +1,3 @@
-# REGISTRY?=gcr.io/k8s-staging-prometheus-adapter
 REGISTRY?=quay.io/applied_dev/applied2
 IMAGE=prometheus-adapter
 ARCH?=$(shell go env GOARCH)
